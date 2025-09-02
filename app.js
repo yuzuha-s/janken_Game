@@ -20,39 +20,40 @@ buttonGroup.addEventListener("click", function (event) {
   }else if (target.textContent.includes("パー")) {
     yourHand = "パー";
   }
+  const cpuHand = hands[Math.floor(Math.random() * hands.length)];
 
-  const rivalHand = hands[Math.floor(Math.random() * hands.length)];
-
-  // 結果表示
-  let result;
-  if (checkbox.checked) {
-    const cheatData = cheat(yourHand);
-    result = cheatData.result;
-    resultP.textContent = `あなた：${yourHand} 相手：${cheatData.rival}  → ${cheatData.result}`;
-  } else {
-    const matchResult = match(yourHand, rivalHand);
-    result = matchResult;
-    resultP.textContent = `あなた：${yourHand}    相手：${rivalHand}  →${match(yourHand,rivalHand)}`;
-  }
-  //前の処理をクリアにする
-  resultP.classList.remove("win", "lose", "draw");
-  if (result.includes("あなたの勝ち！")) {
-    resultP.classList.toggle("win");
-  } else if (result.includes("あなたの負け！")) {
-    resultP.classList.toggle("lose");
-  } else {
-    resultP.classList.toggle("draw");
-  }
+  results(yourHand, cpuHand);
 });
+// 結果表示
+function results(yourHand, cpuHand) {
+    let result;
+    if (checkbox.checked) {
+      const cheatData = cheat(yourHand);
+      result = cheatData.result;
+      resultP.textContent = `あなた：${yourHand} 相手：${cheatData.cpu}  → ${cheatData.result}`;
+    } else {
+      result = match(yourHand, cpuHand);
+      resultP.textContent = `あなた：${yourHand}  相手：${cpuHand} →${result}`;
+    }
+    //前の処理をクリアにする
+    resultP.classList.remove("win", "lose", "draw");
+    if (result.includes("あなたの勝ち！")) {
+      resultP.classList.add("win");
+    } else if (result.includes("あなたの負け！")) {
+      resultP.classList.add("lose");
+    } else {
+      resultP.classList.add("draw");
+    }
+}
 
 // 勝敗判定関数
-function match(your, rival) {
-  if (your === rival) {
+function match(your, cpu) {
+  if (your === cpu) {
     return "あいこ";
   } else if (
-    (your === "グー" && rival === "チョキ") ||
-    (your === "チョキ" && rival === "パー") ||
-    (your === "パー" && rival === "グー")
+    (your === "グー" && cpu === "チョキ") ||
+    (your === "チョキ" && cpu === "パー") ||
+    (your === "パー" && cpu === "グー")
   ) {
     return "あなたの勝ち！";
   } else {
@@ -62,12 +63,12 @@ function match(your, rival) {
 
 //チートモードの勝敗判定関数-相手の出し方を固定する
 function cheat(your) {
-  let rival;
-  if (your === "グー") rival = "チョキ";
-  else if (your === "チョキ") rival = "パー";
-  else if (your === "パー") rival = "グー";
+  let cpu;
+  if (your === "グー") cpu = "チョキ";
+  else if (your === "チョキ") cpu = "パー";
+  else if (your === "パー") cpu = "グー";
   return {
-    rival: rival,
+    cpu: cpu,
     result: "あなたの勝ち！(チートモードON)",
   };
 }
@@ -79,7 +80,4 @@ checkbox.addEventListener("change", function () {
     document.body.classList.remove("cheat-active");
   }
 });
-
-// Math.floor(Math.random() * 配列.length)
-// npx eslint app.js
 
